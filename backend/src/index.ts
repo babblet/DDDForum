@@ -46,7 +46,11 @@ function parseUserForResponse(user: User) {
 }
 
 const app = express();
+const cors = require('cors')
 app.use(express.json());
+app.use(cors({
+  origin: '*' // Allow all origins for dev
+}))
 
 // Create a new user
 app.post("/users/new", async (req: Request, res: Response) => {
@@ -235,6 +239,36 @@ app.get("/users", async (req: Request, res: Response) => {
       data: undefined,
       success: false,
     });
+  }
+});
+
+app.get('/posts', async (req: Request, res: Response) => {
+  try {
+    const { sort } = req.query;
+    
+    if (sort !== 'recent') {
+      return res.status(HTTPStatusCodes.BadRequest).json({ error: Errors.ClientError, data: undefined, success: false })
+    } 
+  
+    let postsWithVotes = await database.post.findMany({
+      include: {
+        upVotes: true, // Include associated votes for each post
+        downVotes: true,
+        author: {
+          include: {
+            user: true
+          }
+        },
+        comments: true
+      },
+      orderBy: {
+        dateCreated: 'desc', // Sorts by dateCreated in descending order
+      },
+    });
+
+    return res.json({ error: undefined, data: postsWithVotes, success: true });
+  } catch (error) {
+    return res.status(HTTPStatusCodes.InternalServerError).json({ error: Errors.ServerError, data: undefined, success: false });
   }
 });
 
