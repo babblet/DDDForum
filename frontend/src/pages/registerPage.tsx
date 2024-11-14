@@ -46,7 +46,6 @@ export const RegisterPage: React.FC = () => {
           navigate("/")
         }, 3000)
       } catch (err: unknown) {
-        console.log(err);
         toast.error("Unknown error");
       }
     }, {

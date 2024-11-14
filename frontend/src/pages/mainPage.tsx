@@ -26,7 +26,6 @@ export const MainPage = () => {
 
       setPosts(response.data.data);
     }).catch((err: unknown) => {
-      console.log(err);
       toast.error("Failed to fetch posts");
     });
   }, []);

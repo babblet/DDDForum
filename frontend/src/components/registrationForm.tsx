@@ -15,7 +15,6 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
   const [lastName, setLastName] = useState<string>("");
 
   const handleSubmit = () => {
-    console.log('On submit')
     console.log({ email, username, firstName, lastName })
     onSubmit({ email, username, firstName, lastName });
   };
