@@ -14,10 +14,70 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  username  String   @unique
+  id        Int     @id @default(autoincrement())
+  email     String  @unique
+  username  String  @unique
   firstName String
   lastName  String
   password  String
+  Member    Member?
+}
+
+model Member {
+  id     Int @id @default(autoincrement())
+
+  userId Int @unique
+  user      User       @relation(fields: [userId], references: [id])
+
+  posts     Post[]     @relation("MemberToPost")
+  upVotes   PostUpVote[]   @relation("MemberToUpVote")
+  downVotes PostDownVote[] @relation("MemberToDownVote")
+  comments  Comment[]  @relation("MemberToComment")
+}
+
+model Post {
+  id        Int        @id @default(autoincrement())
+  title     String
+  content   String
+  postType  String  // 'Text or Link'
+  dateCreated DateTime @default(now())
+
+  memberId  Int
+  author    Member     @relation("MemberToPost", fields: [memberId], references: [id])
+
+  comments  Comment[]  @relation("PostToComment")
+  upVotes   PostUpVote[]   @relation("PostToUpVote")
+  downVotes PostDownVote[] @relation("PostToDownVote")
+}
+
+model PostUpVote {
+  id       Int    @id @default(autoincrement())
+  postId   Int
+  post     Post   @relation("PostToUpVote", fields: [postId], references: [id])
+  memberId Int
+  member   Member @relation("MemberToUpVote", fields: [memberId], references: [id])
+}
+
+model PostDownVote {
+  id       Int    @id @default(autoincrement())
+  postId   Int
+  post     Post   @relation("PostToDownVote", fields: [postId], references: [id])
+  memberId Int
+  member   Member @relation("MemberToDownVote", fields: [memberId], references: [id])
+}
+
+model Comment {
+  id       Int    @id @default(autoincrement())
+  content  String
+
+  postId   Int
+  post     Post   @relation("PostToComment", fields: [postId], references: [id])
+
+  memberId Int
+  member   Member @relation("MemberToComment", fields: [memberId], references: [id])
+
+  parentCommentId Int?
+  parentComment Comment? @relation("CommentToComment", fields: [parentCommentId], references: [id])
+
+  childComments Comment[] @relation("CommentToComment")
 }

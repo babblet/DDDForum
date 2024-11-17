@@ -20,6 +20,9 @@
     "test:dev": "jest --watchAll",
     "prisma": "prisma"
   },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "npm run test && npm run prettier-format && npm run lint"
@@ -51,6 +54,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
+    "cors": "^2.8.5",
     "express": "^4.21.1",
     "jest-cucumber": "^3.0.1",
     "prisma": "^5.22.0"
